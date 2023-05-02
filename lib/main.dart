@@ -1,3 +1,6 @@
+import 'dart:io';
+
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 
@@ -17,7 +20,7 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      home: const MyHomePage(title: 'Flutter Demo Home Page'),
+      home: const MyHomePage(title: 'Apprendre le image picker'),
     );
   }
 }
@@ -32,7 +35,8 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
 
-
+ImagePicker imagePicker = ImagePicker();
+File? file;
 
 
   @override
@@ -45,14 +49,40 @@ class _MyHomePageState extends State<MyHomePage> {
       ),
       body: Center(
         child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          mainAxisSize: MainAxisSize.max,
           children: <Widget>[
-            const Text(
-              'You have pushed the button this many times:',
+            Expanded(
+                child: (file != null)
+                    ? Image.file(file!)
+                    : const Center( child : Text("Prenez une photo")),
             ),
+
+            Row(
+              mainAxisSize: MainAxisSize.max,
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                ElevatedButton(
+                    onPressed: (() => useCamera(ImageSource.gallery)),
+                    child: Icon(Icons.photo_library_outlined),
+                ),
+              ElevatedButton(onPressed: (() => useCamera(ImageSource.camera)),
+                  child: const Icon(Icons.camera_alt))
+              ],
+            )
           ],
         ),
       ),
     );
   }
+
+  Future useCamera(ImageSource source) async {
+    XFile? xFile = await imagePicker.pickImage(source: source);
+    if (xFile != null) {
+      setState(() {
+        file = File(xFile!.path);
+      });
+    }
+  }
+
 }
